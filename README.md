@@ -1,6 +1,5 @@
 # GangWhaN_User
 
-# GangWhaN_User
 
 테스트 계정
 rider3
