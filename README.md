@@ -6,7 +6,9 @@ rider3
 
 한식-몽땅치킨
 
+
 // /screens
+
 Register.js -> 로그인 화면의 회원가입 버튼 선택 첫화면
 
 RegisterInput.js -> 회원가입 내용 작성 화면
@@ -36,7 +38,9 @@ DeliveryFood.js -> 한식, 중식, .... 등 메뉴 카테고리 화면
 AddressInput.js -> 메인화면 주소입력 버튼
 
 
+
 // screens/MyMenu
+
 MyHeartList.js -> 찜한 매장 목록
 
 ServiceCenter.js -> 고객센터 홈
@@ -46,6 +50,7 @@ MyOrderList.js -> 내 주문 목록
 MyOrderDetail.js -> 내 주문 목록 상세
 
 MyMenuHome.js -> 햄버거 버튼 선택 첫 화면
+
 
 
 // screens/FindAcount
@@ -61,9 +66,12 @@ FindIdResult.js -> 아이디 찾기 결과 화면
 FindPass....js -> 위와 동일
 
 
+
 // /src/navigation
+
 RootNavigation.js -> 전역에서 navigation 사용
 
 
 // /src/components
+
 CreateDeliveryList.js -> 매장 리스트 출력
