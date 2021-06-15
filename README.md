@@ -49,6 +49,7 @@ MyMenuHome.js -> 햄버거 버튼 선택 첫 화면
 
 
 // screens/FindAcount
+
 FindAccount.js -> 로그인 화면의 계정찾기 버튼 첫화면
 
 FindId.js -> 아이디 찾기 첫화면
