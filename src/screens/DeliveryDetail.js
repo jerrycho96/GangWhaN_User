@@ -24,152 +24,10 @@ import {Footer} from 'native-base';
 import {TextInput} from 'react-native-paper';
 import CreateDeliveryList from '../components/CreateDeliveryList';
 import {Platform} from 'react-native';
-import DeliveryOrderTab from '../components/DeliveryOrderTab';
-import DeliveryMenuTab from '../components/DeliveryMenuTab';
 import {navigate} from '../navigation/RootNavigation';
-import CreateModal from '../components/CreateModal';
 import {ModalConfirm, ModalAdult} from '../components/BOOTSTRAP';
 
 const windowWidth = Dimensions.get('window').width;
-
-const defaultData = [
-  {
-    key: 0,
-    title: '김치찌개1',
-    data: [
-      {
-        name: '김치찌개',
-        stars: 3.0,
-        img: require('./../images/listitemimg.png'),
-        delPrice: '7,000',
-        delTime: '13:00 ~ 20:00',
-        contents: '강화김치찌개에서 가장 잘나가는 메인메뉴!',
-        delKm: '1.2',
-        new: true,
-        adult: null,
-        titlemenu: true,
-      },
-      {
-        name: '김치찌개',
-        stars: 3.5,
-        img: require('./../images/listitemimg.png'),
-        delPrice: '7,000',
-        delTime: '14:00 ~ 20:00',
-        contents: '강화김치찌개에서 가장 잘나가는 메인메뉴!',
-        delKm: '1.2',
-        new: true,
-        adult: null,
-        titlemenu: true,
-      },
-      {
-        name: '강화김치찌개3',
-        stars: 5.0,
-        img: require('./../images/listitemimg.png'),
-        delPrice: '7,000',
-        delTime: '15:00 ~ 20:00',
-        contents: '강화김치찌개에서 가장 잘나가는 메인메뉴!',
-        delKm: '1.2',
-        new: false,
-        adult: null,
-        titlemenu: false,
-      },
-      {
-        name: '강화김치찌개2',
-        stars: 2.5,
-        img: require('./../images/listitemimg.png'),
-        delPrice: '7,000',
-        delTime: '10:00 ~ 20:00',
-        contents: '강화김치찌개에서 가장 잘나가는 메인메뉴!',
-        delKm: '1.2',
-        new: false,
-        adult: null,
-        titlemenu: false,
-      },
-    ],
-  },
-  {
-    key: 1,
-    title: '된장찌개',
-    data: [
-      {
-        name: '된장찌개',
-        stars: 3.0,
-        img: require('./../images/listitemimg.png'),
-        delPrice: '7,000',
-        delTime: '13:00 ~ 20:00',
-        contents: '강화김치찌개에서 가장 잘나가는 메인메뉴!',
-        delKm: '1.2',
-        new: true,
-        adult: null,
-        titlemenu: true,
-      },
-      {
-        name: '된장찌개',
-        stars: 3.5,
-        img: require('./../images/listitemimg.png'),
-        delPrice: '7,000',
-        delTime: '14:00 ~ 20:00',
-        contents: '강화김치찌개에서 가장 잘나가는 메인메뉴!',
-        delKm: '1.2',
-        new: true,
-        adult: null,
-
-        titlemenu: true,
-      },
-    ],
-  },
-  {
-    key: 2,
-    title: '주류메뉴',
-    data: [
-      {
-        name: '참이슬후레쉬',
-        contents: null,
-        img: null,
-        delPrice: '4,000',
-        adult: true,
-      },
-      {
-        name: '참이슬후레쉬',
-        contents: null,
-        img: null,
-        delPrice: '4,000',
-        adult: true,
-      },
-    ],
-  },
-];
-
-const reviewData = {
-  data1: [
-    {
-      key: '0',
-      name: '달달무슨달',
-      contents: '김치찌개 강추 !!',
-      date: '2021-02-02',
-      img1: require('./../images/listitemimg.png'),
-      adminreview: {
-        review: '소중한 리뷰 감사합니다.^^',
-      },
-    },
-    {
-      key: '1',
-      name: '홍길동',
-      contents: '김치찌개 강추 !!',
-      img1: null,
-      date: '2021-01-02',
-    },
-  ],
-  data2: [
-    {
-      key: '2',
-      name: '강화김치찌개',
-      contents: '김치찌개 강추 !!',
-      img1: null,
-      date: '2021-02-02',
-    },
-  ],
-};
 
 const imgDatas = [
   {
@@ -205,7 +63,6 @@ export default function DeliVeryDetailScreen({route}) {
     sl_title,
     review_avg,
   } = route.params;
-  const [faqRender, setfaqRender] = useState(defaultData);
   const [menu, setMenu] = useState();
   const [onAdultModal, setOnAdultModal] = useState(false);
 
@@ -846,13 +703,6 @@ function DetailDeliveryMenuTab2({sl_biztel, sl_soge}) {
                       {width: windowWidth / 2.22, height: windowWidth / 2.22},
                     ]}
                   />
-                  {/* 이미지 모달 위치 */}
-
-                  {/* <CreateModal
-                    modalVisible={modalVisible}
-                    setModalVisible={setModalVisible}
-                    body={<Image source={item.img}></Image>}
-                  /> */}
                 </TouchableOpacity>
               </View>
             )}

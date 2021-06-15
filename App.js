@@ -28,8 +28,6 @@ import DeliveryFoodScreen from './src/screens/DeliveryFood';
 import SpecialFoodScreen from './src/screens/SpecialFood';
 import DeliveryListScreen from './src/screens/DeliveryList';
 import DeliVeryDetailScreen from './src/screens/DeliveryDetail';
-import DeliveryMenuTab from './src/components/DeliveryMenuTab';
-import DeliveryOrderTab from './src/components/DeliveryOrderTab';
 import CouponScreen from './src/screens/Coupon';
 import DetailMenu from './src/screens/DetailMenu';
 import Cart from './src/screens/Cart';
@@ -50,7 +48,6 @@ import ServiceCenter from './src/screens/MyMenu/ServiceCenter';
 import Notice from './src/screens/MyMenu/Notice';
 import NoticeView from './src/screens/MyMenu/NoticeView';
 import Questions from './src/screens/MyMenu/Questions';
-import CreateDeliveryMenuList from './src/components/CreateDeliveryMenuList';
 import QuestionsView from './src/screens/MyMenu/QuestionsView';
 import FAQ from './src/screens/MyMenu/FAQ';
 import WriteReview1 from './src/screens/WriteReview1';
@@ -140,11 +137,6 @@ function App() {
           name="Register"
           options={{headerShown: false}}
           component={RegisterScreen}
-        />
-        <Stack.Screen
-          name="CreateDeliveryMenuList"
-          options={{headerShown: true}}
-          component={CreateDeliveryMenuList}
         />
         <Stack.Screen
           name="FindAccount"
@@ -283,16 +275,6 @@ function App() {
           name="DeliveryDetail"
           component={DeliVeryDetailScreen}
           options={{headerTitle: '매장 상세정보'}}
-        />
-        <Stack.Screen
-          name="DeliveryMenuTab"
-          component={DeliveryMenuTab}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="DeliveryOrderTab"
-          component={DeliveryOrderTab}
-          options={{headerShown: false}}
         />
         <Stack.Screen
           name="WriteReview1"

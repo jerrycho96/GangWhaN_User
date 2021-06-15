@@ -73,8 +73,8 @@ function MainScreen({navigation}) {
             ? navigate('QuickDelivery')
             : navigate('DeliveryFood', {
                 MAINID: item.ca_id,
-                LAT: LAT,
-                LON: LON,
+                LAT: lat,
+                LON: lon,
               });
         }
       }}></MainCircleButton>

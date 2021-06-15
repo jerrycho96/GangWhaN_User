@@ -9,55 +9,6 @@ import {
 } from 'react-native';
 import {navigate} from '../navigation/RootNavigation';
 
-const defaultData = {
-  datas3: [
-    {
-      key: '0',
-      name: '강화김치찌개',
-      stars: 3.0,
-      img: require('./../images/listitemimg.png'),
-      delPrice: '3,850',
-      delTime: '13:00 ~ 20:00',
-      delKm: '1.2',
-      new: true,
-      takeout: true,
-    },
-    {
-      key: '1',
-      name: '강화김치찌개1',
-      stars: 3.5,
-      img: require('./../images/listitemimg.png'),
-      delPrice: '3,850',
-      delTime: '14:00 ~ 20:00',
-      delKm: '1.2',
-      new: true,
-      takeout: true,
-    },
-    {
-      key: '2',
-      name: '강화김치찌개3',
-      stars: 5.0,
-      img: require('./../images/listitemimg.png'),
-      delPrice: '3,850',
-      delTime: '15:00 ~ 20:00',
-      delKm: '1.2',
-      new: false,
-      takeout: true,
-    },
-    {
-      key: '3',
-      name: '강화김치찌개2',
-      stars: 2.5,
-      img: require('./../images/listitemimg.png'),
-      delPrice: '3,850',
-      delTime: '10:00 ~ 20:00',
-      delKm: '1.2',
-      new: false,
-      takeout: true,
-    },
-  ],
-};
-
 const RenderItem = ({item, LAT, LON}) => {
   return (
     <View style={{paddingHorizontal: 10}}>
@@ -148,8 +99,6 @@ const RenderItem = ({item, LAT, LON}) => {
 };
 
 function CreateDeliveryList({shopList, ca_id}) {
-  const [foodplace, setFoodPlace] = useState(defaultData.datas3);
-
   return (
     <View style={style.root}>
       <FlatList

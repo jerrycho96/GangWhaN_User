@@ -7,24 +7,13 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import {
-  Container,
-  Content,
-  Thumbnail,
-  Header,
-  Left,
-  Right,
-  Body,
-} from 'native-base';
+import {Left, Right, Body, Footer} from 'native-base';
 import style from '../style/style';
-import {Footer} from 'native-base';
 import {TextInput} from 'react-native-paper';
 
 import axios from './../api/axios';
 
-import {MainCircleButton} from './Main';
 import CreateDeliveryList from '../components/CreateDeliveryList';
-import {red100, white} from 'react-native-paper/lib/typescript/styles/colors';
 import {navigate} from '../navigation/RootNavigation';
 
 function DeliveryListScreen({route}) {
@@ -89,33 +78,6 @@ function DeliveryListScreen({route}) {
               </TouchableOpacity>
             );
           })}
-          {/* <View style={styles.tag_unselect}>
-            <Text style={styles.tag_unselect_text}>중식</Text>
-          </View>
-          <View style={styles.tag_unselect}>
-            <Text style={styles.tag_unselect_text}>일식/회</Text>
-          </View>
-          <View style={styles.tag_unselect}>
-            <Text style={styles.tag_unselect_text}>분식</Text>
-          </View>
-          <View style={styles.tag_unselect}>
-            <Text style={styles.tag_unselect_text}>양식</Text>
-          </View>
-          <View style={styles.tag_unselect}>
-            <Text style={styles.tag_unselect_text}>치킨/피자</Text>
-          </View>
-          <View style={styles.tag_unselect}>
-            <Text style={styles.tag_unselect_text}>탕/찜</Text>
-          </View>
-          <View style={styles.tag_unselect}>
-            <Text style={styles.tag_unselect_text}>족발/보쌈</Text>
-          </View>
-          <View style={styles.tag_unselect}>
-            <Text style={styles.tag_unselect_text}>패스트푸드</Text>
-          </View>
-          <View style={styles.tag_unselect}>
-            <Text style={styles.tag_unselect_text}>야식</Text>
-          </View> */}
         </ScrollView>
       </View>
       <View style={{backgroundColor: 'white', flex: 1}}>
