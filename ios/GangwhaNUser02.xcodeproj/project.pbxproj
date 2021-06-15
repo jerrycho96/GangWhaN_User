@@ -12,6 +12,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		4F5F0093F75A09E8E3FB52DF /* libPods-GangwhaNUser02.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FFBF1A04317C86D31E545903 /* libPods-GangwhaNUser02.a */; };
+		71A1065326783D50009B80B6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 71A1065226783D50009B80B6 /* GoogleService-Info.plist */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		DFF651F442C24C55354931B1 /* libPods-GangwhaNUser02-GangwhaNUser02Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C4C5AF432468CC0ECA812C0D /* libPods-GangwhaNUser02-GangwhaNUser02Tests.a */; };
 /* End PBXBuildFile section */
@@ -40,6 +41,7 @@
 		5176C28A5C3A568A1BB6D803 /* Pods-GangwhaNUser02-GangwhaNUser02Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GangwhaNUser02-GangwhaNUser02Tests.release.xcconfig"; path = "Target Support Files/Pods-GangwhaNUser02-GangwhaNUser02Tests/Pods-GangwhaNUser02-GangwhaNUser02Tests.release.xcconfig"; sourceTree = "<group>"; };
 		55F074C601C30A2586DCC8ED /* Pods-GangwhaNUser02.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GangwhaNUser02.release.xcconfig"; path = "Target Support Files/Pods-GangwhaNUser02/Pods-GangwhaNUser02.release.xcconfig"; sourceTree = "<group>"; };
 		61287E0653611CB8157380C6 /* Pods-GangwhaNUser02-GangwhaNUser02Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GangwhaNUser02-GangwhaNUser02Tests.debug.xcconfig"; path = "Target Support Files/Pods-GangwhaNUser02-GangwhaNUser02Tests/Pods-GangwhaNUser02-GangwhaNUser02Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		71A1065226783D50009B80B6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		71C10D57265354CF00DC78B7 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome5_Regular.ttf; sourceTree = "<group>"; };
 		71C10D58265354CF00DC78B7 /* Ionicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Ionicons.ttf; sourceTree = "<group>"; };
 		71C10D59265354CF00DC78B7 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SimpleLineIcons.ttf; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				71A1065226783D50009B80B6 /* GoogleService-Info.plist */,
 				71C10D562653546500DC78B7 /* Fonts */,
 				13B07FAE1A68108700A75B9A /* GangwhaNUser02 */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -208,6 +211,7 @@
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
 				8DAA3A9073B286AA67B145CC /* [CP] Copy Pods Resources */,
+				E7624EAB376DEFFF69028DE1 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -230,6 +234,7 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				52489CC3A18F22CA76BCBCA2 /* [CP] Copy Pods Resources */,
+				58B6283E70F738F85DAFA366 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -290,6 +295,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				71A1065326783D50009B80B6 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -349,6 +355,23 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-GangwhaNUser02/Pods-GangwhaNUser02-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		58B6283E70F738F85DAFA366 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-GangwhaNUser02/Pods-GangwhaNUser02-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-GangwhaNUser02/Pods-GangwhaNUser02-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-GangwhaNUser02/Pods-GangwhaNUser02-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		8DAA3A9073B286AA67B145CC /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -386,6 +409,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E7624EAB376DEFFF69028DE1 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-GangwhaNUser02-GangwhaNUser02Tests/Pods-GangwhaNUser02-GangwhaNUser02Tests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-GangwhaNUser02-GangwhaNUser02Tests/Pods-GangwhaNUser02-GangwhaNUser02Tests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-GangwhaNUser02-GangwhaNUser02Tests/Pods-GangwhaNUser02-GangwhaNUser02Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -498,6 +538,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = GangwhaNUser02/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -507,7 +548,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dmonster.gangwhanuser;
 				PRODUCT_NAME = GangwhaNUser02;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -523,6 +564,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = GangwhaNUser02/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -532,7 +574,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.dmonster.gangwhanuser;
 				PRODUCT_NAME = GangwhaNUser02;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

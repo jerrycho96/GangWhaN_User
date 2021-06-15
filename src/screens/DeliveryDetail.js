@@ -17,6 +17,8 @@ import Stars from 'react-native-stars';
 
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 
+import axios from './../api/axios';
+
 import style from '../style/style';
 import {Footer} from 'native-base';
 import {TextInput} from 'react-native-paper';
@@ -190,11 +192,84 @@ const imgDatas = [
 
 const Tab = createMaterialTopTabNavigator();
 
-export default function DeliVeryDetailScreen(props) {
-  // const {NAME, STARS, DELPRICE, DELTIME} = route.params;
+export default function DeliVeryDetailScreen({route}) {
+  const {
+    sl_sn,
+    min_order_price,
+    sl_delv_time,
+    delv_price,
+    sl_soge,
+    sl_addr1,
+    sl_biztel,
+    shop_review_list,
+    sl_title,
+    review_avg,
+  } = route.params;
   const [faqRender, setfaqRender] = useState(defaultData);
   const [menu, setMenu] = useState();
   const [onAdultModal, setOnAdultModal] = useState(false);
+
+  const [shopMenuInfo, setShopMenuInfo] = React.useState([]);
+  const [reviewList, setReviewList] = React.useState([]);
+  const [reviewTotalcount, setReviewTotalCount] = React.useState();
+
+  React.useEffect(() => {
+    let dataToSend = {sl_sn: sl_sn};
+    let formBody = [];
+    for (let key in dataToSend) {
+      let encodedKey = encodeURIComponent(key);
+      let encodedValue = encodeURIComponent(dataToSend[key]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    formBody = formBody.join('&');
+    axios
+      .post(
+        'shop_menuinfo.php',
+        // mb_id: userEmail,
+        // mb_password: userPassword,
+        formBody,
+      )
+      .then(function (response) {
+        setShopMenuInfo(response.data.rowdata);
+
+        // console.log(response.data.rowdata);
+        console.log(response.data.rowdata);
+        console.log('메뉴 상세정보 통신 성공');
+      })
+      .catch(function (error) {
+        console.log(error);
+        console.log('통신 실패');
+      });
+  }, []);
+
+  React.useEffect(() => {
+    let dataToSend = {sl_sn: sl_sn};
+    let formBody = [];
+    for (let key in dataToSend) {
+      let encodedKey = encodeURIComponent(key);
+      let encodedValue = encodeURIComponent(dataToSend[key]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    formBody = formBody.join('&');
+    axios
+      .post(
+        'shop_review.php',
+        // mb_id: userEmail,
+        // mb_password: userPassword,
+        formBody,
+      )
+      .then(function (response) {
+        setReviewList(response.data.rowdata);
+        setReviewTotalCount(response.data.totalcount);
+
+        console.log(response.data.rowdata);
+        console.log('리뷰 통신 성공');
+      })
+      .catch(function (error) {
+        console.log(error);
+        console.log('통신 실패');
+      });
+  }, []);
 
   const scrollViewRef = React.useRef();
   const autoscroll = () => scrollViewRef.current.scrollToEnd({animated: true});
@@ -209,17 +284,19 @@ export default function DeliVeryDetailScreen(props) {
           <View>
             <View style={styles.container}>
               <View style={styles.detailBox}>
-                <Text style={styles.detailTitle}>김치찌개</Text>
+                <Text style={styles.detailTitle}>{sl_title}</Text>
                 <View style={{alignItems: 'center', flexDirection: 'row'}}>
                   <Stars
                     display={3}
                     spacing={5}
-                    count={5}
+                    count={review_avg - 3}
                     starSize={17}
                     fullStar={require('../images/starFilled.png')}
                     emptyStar={require('../images/starEmpty.png')}
                   />
-                  <Text style={{fontWeight: '600', marginLeft: 10}}>3</Text>
+                  <Text style={{fontWeight: '600', marginLeft: 10}}>
+                    {review_avg}
+                  </Text>
                 </View>
                 <View style={{width: '100%'}}>
                   <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -279,21 +356,36 @@ export default function DeliVeryDetailScreen(props) {
 
             {/* 배달주문 */}
             {/* 탭바 */}
-            <DetailDeliveryOrderTab1 />
-            <DetailDeliveryOrderTab2 setMenu={setMenu} />
+            <DetailDeliveryOrderTab1
+              min_order_price={min_order_price}
+              sl_delv_time={sl_delv_time}
+              delv_price={delv_price}
+              sl_addr1={sl_addr1}
+            />
+            <DetailDeliveryOrderTab2
+              setMenu={setMenu}
+              sl_soge={sl_soge}
+              sl_biztel={sl_biztel}
+              reviewList={reviewList}
+              reviewTotalcount={reviewTotalcount}
+              sl_title={sl_title}
+            />
           </View>
         }
         // keyExtractor={(item, index) => item + index}
+        data={shopMenuInfo}
         renderItem={({item}) =>
           menu === '1' ? (
             <RenderFaqItem
               item={item}
+              sl_sn={sl_sn}
               setOnAdultModal={setOnAdultModal}
               autoscroll={autoscroll}
+              min_order_price={min_order_price}
+              // shopMenuInfo={shpoMenuInfo}
             />
           ) : null
         }
-        data={faqRender}
       />
       <ModalAdult
         open={onAdultModal}
@@ -346,29 +438,45 @@ const theme = {
   },
 };
 
-function RenderFaqItem({item, index, setOnAdultModal, autoscroll}) {
+function RenderFaqItem({
+  item,
+  index,
+  setOnAdultModal,
+  autoscroll,
+  shpoMenuInfo,
+  sl_sn,
+  min_order_price,
+}) {
   const [expanded, setExpended] = React.useState(true);
   return (
     <PaperProvider theme={theme}>
       <View>
         <List.Accordion
-          id={index}
+          id={item.menu_ca_id}
           expanded={expanded}
-          title={item.title}
+          title={item.ca_name}
           titleStyle={{fontWeight: '700', fontSize: 18}}
           style={{backgroundColor: '#F9F9F9'}}
           onPress={() => {
             autoscroll();
             setExpended(!expanded);
           }}>
-          {item.data.map((item, index) => {
+          {item.menu_list.map((item, index) => {
             return (
               <List.Item
-                key={index}
+                key={item.it_id}
                 onPress={() => {
-                  item.adult !== null
+                  item.adult_flag === 'Y'
                     ? setOnAdultModal(true)
-                    : navigate('DetailMenu');
+                    : navigate('DetailMenu', {
+                        it_id: item.it_id,
+                        mnu_name: item.mnu_name,
+                        mnu_price: item.mnu_price,
+                        mnu_stock: item.mnu_stock,
+                        mnu_pic: item.mnu_pic,
+                        sl_sn: sl_sn,
+                        min_order_price: min_order_price,
+                      });
                 }}
                 title={
                   <View>
@@ -379,9 +487,9 @@ function RenderFaqItem({item, index, setOnAdultModal, autoscroll}) {
                           fontWeight: 'bold',
                           marginRight: 10,
                         }}>
-                        {item.name}
+                        {item.mnu_name}
                       </Text>
-                      {item.titlemenu ? (
+                      {item.mnu_stock === 'Y' ? (
                         <View
                           style={{
                             backgroundColor: '#E51A47',
@@ -395,23 +503,24 @@ function RenderFaqItem({item, index, setOnAdultModal, autoscroll}) {
                           <Text style={{color: 'white'}}>대표</Text>
                         </View>
                       ) : null}
-                      {item.adult ? (
+                      {item.adult_flag === 'Y' ? (
                         <Image
                           source={require('../images/deliverydetailadult1.png')}></Image>
                       ) : null}
                     </View>
-                    {item.contents !== null ? (
-                      <Text style={{color: '#777777'}}>{item.contents}</Text>
+                    {item.mnu_soge !== '' ? (
+                      <Text style={{color: '#777777'}}>{item.mnu_soge}</Text>
                     ) : null}
                     <Text style={{marginTop: 15, fontSize: 16}}>
-                      {item.delPrice}원
+                      {item.mnu_price}원
                     </Text>
                   </View>
                 }
                 right={() =>
-                  item.img !== null ? (
+                  item.mnu_pic !== '' ? (
                     <Image
-                      source={item.img}
+                      // source={item.img}
+                      source={{uri: item.mnu_pic}}
                       style={{
                         width: 90,
                         height: 90,
@@ -434,7 +543,12 @@ function RenderFaqItem({item, index, setOnAdultModal, autoscroll}) {
 }
 
 // 탭 메뉴 1
-function DetailDeliveryOrderTab1() {
+function DetailDeliveryOrderTab1({
+  min_order_price,
+  sl_delv_time,
+  delv_price,
+  sl_addr1,
+}) {
   const [tabMenu1, setTabMenu1] = useState(true);
 
   return (
@@ -492,15 +606,15 @@ function DetailDeliveryOrderTab1() {
             <View style={{padding: 15, backgroundColor: 'white'}}>
               <View style={{flexDirection: 'row'}}>
                 <Text style={styles.title}>최소주문금액</Text>
-                <Text style={style.text2}>10,000 원</Text>
+                <Text style={style.text2}>{min_order_price} 원</Text>
               </View>
               <View style={{flexDirection: 'row'}}>
                 <Text style={[styles.title, {marginRight: 48}]}>배달시간</Text>
-                <Text style={style.text2}>10,000 원</Text>
+                <Text style={style.text2}>{sl_delv_time} 분</Text>
               </View>
               <View style={{flexDirection: 'row'}}>
                 <Text style={[styles.title, {marginRight: 48}]}>배달비용</Text>
-                <Text style={style.text2}>10,000 원</Text>
+                <Text style={style.text2}>{delv_price} 원</Text>
               </View>
             </View>
             <View style={{height: 10, backgroundColor: '#F5F5F5'}}></View>
@@ -561,7 +675,7 @@ function DetailDeliveryOrderTab1() {
             <View style={{padding: 15, backgroundColor: 'white'}}>
               <View style={{flexDirection: 'row'}}>
                 <Text style={styles.title}>최소주문금액</Text>
-                <Text style={style.text2}>10,000 원</Text>
+                <Text style={style.text2}>{min_order_price} 원</Text>
               </View>
               <View style={{flexDirection: 'row'}}>
                 <Text style={[styles.title, {marginRight: 48}]}>조리시간</Text>
@@ -569,7 +683,7 @@ function DetailDeliveryOrderTab1() {
               </View>
               <View style={{flexDirection: 'row'}}>
                 <Text style={[styles.title, {marginRight: 48}]}>위치안내</Text>
-                <Text style={style.text2}>10,000 원</Text>
+                <Text style={style.text2}>{sl_addr1}</Text>
               </View>
               <View>
                 <Image
@@ -666,14 +780,25 @@ const DetailDeliveryOrderTab2 = props => {
           </TouchableOpacity>
         </View>
 
-        {tabMenu2 === '2' ? <DetailDeliveryMenuTab2 /> : null}
-        {tabMenu2 === '3' ? <DetailDeliveryMenuTab3 /> : null}
+        {tabMenu2 === '2' ? (
+          <DetailDeliveryMenuTab2
+            sl_biztel={props.sl_biztel}
+            sl_soge={props.sl_soge}
+          />
+        ) : null}
+        {tabMenu2 === '3' ? (
+          <DetailDeliveryMenuTab3
+            reviewList={props.reviewList}
+            reviewTotalcount={props.reviewTotalcount}
+            sl_title={props.sl_title}
+          />
+        ) : null}
       </View>
     </View>
   );
 };
 
-function DetailDeliveryMenuTab2() {
+function DetailDeliveryMenuTab2({sl_biztel, sl_soge}) {
   const [imgData, setImgData] = React.useState(imgDatas);
   // const [imageModal, setImageModal] = React.useState(false);
   // const [modalVisible, setModalVisible] = useState(false);
@@ -734,12 +859,7 @@ function DetailDeliveryMenuTab2() {
             numColumns={2}></FlatList>
         </View>
         <View style={{padding: 15}}>
-          <Text style={{fontSize: 16}}>
-            오늘도 저희 이차돌창원중동점 차돌박이 전문점을 찾아주신 고객님께
-            감사드립니다.{'\n'}배달 영업시간 10:00~24:00입니다.{'\n'}
-            이차돌창원중동점은 2년의 시간동안 고객과의 소통으로 만들어진
-            가게입니다.
-          </Text>
+          <Text style={{fontSize: 16}}>{sl_soge}</Text>
         </View>
         <View style={{width: '100%', paddingHorizontal: 15}}>
           <Image
@@ -777,7 +897,7 @@ function DetailDeliveryMenuTab2() {
                   매일 - 오전 10:00 ~ 오후 12:00
                 </Text>
                 <Text style={styles.contents}>매주 월요일</Text>
-                <Text style={styles.contents}>070-1234-5678</Text>
+                <Text style={styles.contents}>{sl_biztel}</Text>
                 <Text style={styles.contents}>
                   주차, 단체석, 유아용 의자, 무선인터넷
                 </Text>
@@ -827,7 +947,7 @@ function DetailDeliveryMenuTab2() {
   );
 }
 
-function DetailDeliveryMenuTab3() {
+function DetailDeliveryMenuTab3(props) {
   return (
     <View>
       <View
@@ -838,7 +958,7 @@ function DetailDeliveryMenuTab3() {
           padding: 15,
         }}>
         <Text style={{fontSize: 18, fontWeight: 'bold'}}>
-          사용자 리뷰 577개
+          사용자 리뷰 {props.reviewTotalcount}개
         </Text>
         <TouchableOpacity
           onPress={() => {
@@ -850,80 +970,96 @@ function DetailDeliveryMenuTab3() {
         </TouchableOpacity>
       </View>
       <FlatList
-        data={reviewData.data1}
-        renderItem={RenderReviewList}
+        data={props.reviewList}
+        renderItem={({item}) => (
+          <RenderReviewList item={item} sl_title={props.sl_title} />
+        )}
         keyExtractor={item => item.key}></FlatList>
     </View>
   );
 }
 
-const RenderReviewList = ({item}) => {
+const RenderReviewList = ({item, sl_title}) => {
   return (
     <View style={{padding: 15, backgroundColor: 'white'}}>
       <View style={{flexDirection: 'row'}}>
-        <Text style={[styles.title, {marginRight: 10}]}>{item.name}</Text>
+        <Text style={[styles.title, {marginRight: 10}]}>{item.is_name}</Text>
         <Text style={{color: '#777777'}}>{item.date}</Text>
       </View>
-      <ReviewStars />
+      <ReviewStars is_score={item.is_score} />
       <View>
-        <Text style={[style.text2, {marginVertical: 10}]}>{item.contents}</Text>
+        <Text style={[style.text2, {marginVertical: 10}]}>
+          {item.is_content}
+        </Text>
       </View>
-      {item.img1 !== null ? (
+      {item.is_img !== '' ? (
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
           <Image
-            source={item.img1}
+            source={{uri: item.is_img}}
             style={{
               width: windowWidth / 3.4,
               height: windowWidth / 3.4,
             }}></Image>
-          <Image
-            source={item.img1}
-            style={{
-              width: windowWidth / 3.4,
-              height: windowWidth / 3.4,
-            }}></Image>
-          <Image
-            source={item.img1}
-            style={{
-              width: windowWidth / 3.4,
-              height: windowWidth / 3.4,
-            }}></Image>
+          {item.is_img2 !== '' ? (
+            <Image
+              source={{uri: item.is_img2}}
+              style={{
+                width: windowWidth / 3.4,
+                height: windowWidth / 3.4,
+              }}
+            />
+          ) : null}
+          {item.is_img3 !== '' ? (
+            <Image
+              source={{uri: item.is_img3}}
+              style={{
+                width: windowWidth / 3.4,
+                height: windowWidth / 3.4,
+              }}
+            />
+          ) : null}
         </View>
       ) : (
         <View></View>
       )}
-      <View
-        style={{
-          padding: 15,
-          flexDirection: 'row',
-          backgroundColor: '#F9F9F9',
-          borderColor: '#E5E5E5',
-          borderWidth: 1,
-          borderRadius: 5,
-          marginTop: 10,
-        }}>
-        <Image source={require('../images/adminreviewicon.png')}></Image>
-        <View style={{marginLeft: 15}}>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={[styles.title, {marginRight: 10}]}>강화김치찌개</Text>
-            <Text style={{color: '#777777'}}>2021.0.1.02</Text>
+      {item.is_re !== '' ? (
+        <>
+          <View
+            style={{
+              padding: 15,
+              flexDirection: 'row',
+              backgroundColor: '#F9F9F9',
+              borderColor: '#E5E5E5',
+              borderWidth: 1,
+              borderRadius: 5,
+              marginTop: 10,
+            }}>
+            <Image source={require('../images/adminreviewicon.png')}></Image>
+            <View style={{marginLeft: 15}}>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={[styles.title, {marginRight: 10}]}>
+                  {sl_title}
+                </Text>
+                <Text style={{color: '#777777'}}>{item.is_re_date}</Text>
+              </View>
+              <Text style={style.text2}>{item.is_re}</Text>
+            </View>
           </View>
-          <Text style={style.text2}>소중한 리뷰 감사합니다</Text>
-        </View>
-      </View>
-      <View style={{height: 20}}></View>
+          <View style={{height: 20}}></View>
+        </>
+      ) : null}
       <View style={{height: 1, backgroundColor: '#E5E5E5'}}></View>
     </View>
   );
 };
 
-const ReviewStars = () => {
+const ReviewStars = props => {
   return (
     <View style={{alignItems: 'flex-start'}}>
       <Stars
         display={3.67}
         spacing={2}
-        count={5}
+        count={props.is_score - 3}
         starSize={17}
         fullStar={require('../images/reviewstar.png')}
         emptyStar={require('../images/reviewstar.png')}

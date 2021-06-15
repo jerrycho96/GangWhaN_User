@@ -10,15 +10,163 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
-import {StackActions, CommonActions} from '@react-navigation/native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
 
-import {BtnSubmit} from '../components/BOOTSTRAP';
+import AsyncStorage from '@react-native-community/async-storage';
+
+import axios from './../api/axios';
+// import axios from 'axios';
+
+import {ShowSnackbar} from '../components/BOOTSTRAP';
 import style from '../style/style';
 import {navigate, resetRoot} from '../navigation/RootNavigation';
 
+import KakaoLogin from '@actbase/react-native-kakao-login';
+import {NaverLogin, getProfile} from '@react-native-seoul/naver-login';
+
+// 카카오
+
+const iosKeys = {
+  kConsumerKey: 'Wrl2EnohjGgLLDGoneQ_',
+  kConsumerSecret: 'dDDty5kJz0',
+  kServiceAppName: '테스트앱(iOS)',
+  kServiceAppUrlScheme: 'testapp', // only for iOS
+};
+
+const androidKeys = {
+  kConsumerKey: 'Wrl2EnohjGgLLDGoneQ_',
+  kConsumerSecret: 'dDDty5kJz0',
+  kServiceAppName: '테스트앱(안드로이드)',
+};
+//-------------------------------------------------------------------
+
 function LoginScreen({navigation}) {
+  // 카카오
+  const kakaoLogin = () => {
+    KakaoLogin.login()
+      .then(result => {
+        getProfile1();
+        console.log(`Login Finished:${JSON.stringify(result)}`);
+      })
+      .catch(err => {
+        if (err.code === 'E_CANCELLED_OPERATION') {
+          console.log(`Login Cancelled:${err.message}`);
+        } else {
+          console.log(`Login Failed:${err.code} ${err.message}`);
+        }
+      });
+  };
+
+  const getProfile1 = () => {
+    KakaoLogin.getProfile()
+      .then(result => {
+        console.log(`Login Finished:${JSON.stringify(result)}`);
+      })
+      .catch(err => {
+        console.log(`Get Profile Failed:${err.code} ${err.message}`);
+      });
+  };
+  //-------------------------------------------------------------------
+
+  // 네이버
+  const [naverToken, setNaverToken] = React.useState(null);
+  const initials = Platform.OS === 'ios' ? iosKeys : androidKeys;
+
+  const naverLogin = props => {
+    return new Promise((resolve, reject) => {
+      NaverLogin.login(props, (err, token) => {
+        console.log(`\n\n  Token is fetched  :: ${token} \n\n`);
+        setNaverToken(token);
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(token);
+      });
+    });
+  };
+
+  const naverLogout = () => {
+    NaverLogin.logout();
+    setNaverToken('');
+  };
+
+  const getUserProfile = async () => {
+    const profileResult = await getProfile(naverToken.accessToken);
+    if (profileResult.resultcode === '024') {
+      Alert.alert('로그인 실패', profileResult.message);
+      return;
+    }
+    console.log('profileResult', profileResult);
+  };
+  //-------------------------------------------------------------------
+  // 로그인
+  const [userEmail, setUserEmail] = React.useState('');
+  const [userPassword, setUserPassword] = React.useState('');
+  const [errortext, setErrortext] = React.useState('');
+
+  const passwordInputRef = React.createRef();
+
+  const axiosPost = () => {
+    let dataToSend = {mb_id: userEmail, mb_password: userPassword};
+    let formBody = [];
+    for (let key in dataToSend) {
+      let encodedKey = encodeURIComponent(key);
+      let encodedValue = encodeURIComponent(dataToSend[key]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    formBody = formBody.join('&');
+    axios
+      .post(
+        'login_select.php',
+        // mb_id: userEmail,
+        // mb_password: userPassword,
+        formBody,
+      )
+      .then(function (response) {
+        if (!userEmail) {
+          ShowSnackbar({text: '아이디를 확인해주세요'});
+          return;
+        }
+        if (!userPassword) {
+          ShowSnackbar({text: '비밀번호를 확인해주세요'});
+          return;
+        }
+        if (response.data.message === 'success') {
+          AsyncStorage.setItem(
+            'userData',
+            JSON.stringify({
+              userId: response.data.rowdata[0].mb_id,
+              token: '1234',
+            }),
+          );
+          console.log('login id : ', response.data.rowdata[0].mb_id);
+          ShowSnackbar({
+            text: response.data.rowdata[0].mb_name + ' 님 로그인 되었습니다.',
+          });
+          console.log(AsyncStorage.getItem('userData'));
+          navigation.replace('Main');
+        } else if (response.data.message === 'Processing error(1)') {
+          ShowSnackbar({text: '아이디 또는 비밀번호를 확인해주세요.'});
+        } else {
+          setErrortext(response.data.message);
+          ShowSnackbar({
+            text: '로그인 오류',
+          });
+          console.log(errortext);
+        }
+
+        // console.log(response);
+        console.log('통신 성공');
+      })
+      .catch(function (error) {
+        console.log(error);
+        ShowSnackbar({
+          text: '로그인 오류',
+        });
+        console.log('통신 실패');
+      });
+  };
+
   return (
     <View style={[style.container1, {backgroundColor: 'white'}]}>
       <StatusBar barStyle="dark-content" backgroundColor={'white'} />
@@ -43,12 +191,19 @@ function LoginScreen({navigation}) {
         <View style={style.inputGroup2}>
           <TextInput
             style={style.textInput}
-            placeholder={'아이디를 입력해주세요'}></TextInput>
+            placeholder={'아이디를 입력해주세요'}
+            returnKeyType="next"
+            onChangeText={value => setUserEmail(value)}
+            onSubmitEditing={() =>
+              passwordInputRef.current && passwordInputRef.current.focus()
+            }></TextInput>
         </View>
         <View style={style.inputGroup2}>
           <TextInput
             style={style.textInput}
-            placeholder={'비밀번호를 입력해주세요'}></TextInput>
+            placeholder={'비밀번호를 입력해주세요'}
+            secureTextEntry={true}
+            onChangeText={value => setUserPassword(value)}></TextInput>
         </View>
         <View style={style.inputGroup2}>
           {/* <BtnSubmit title="로그인" navi="Main"></BtnSubmit> */}
@@ -63,7 +218,11 @@ function LoginScreen({navigation}) {
               borderRadius: 5,
               justifyContent: 'center',
               alignItems: 'center',
-            }}>
+            }}
+            onPress={
+              // handleSubmitPress
+              axiosPost
+            }>
             <Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>
               로그인
             </Text>
@@ -94,7 +253,8 @@ function LoginScreen({navigation}) {
             style.social_btn,
             style.container0,
             {backgroundColor: '#00C73C'},
-          ]}>
+          ]}
+          onPress={() => naverLogin(initials)}>
           <View style={{flexDirection: 'row'}}>
             <Image
               source={require('./../images/naver_login.png')}
@@ -110,7 +270,10 @@ function LoginScreen({navigation}) {
             style.social_btn,
             style.container0,
             {backgroundColor: '#FAE100'},
-          ]}>
+          ]}
+          onPress={() => {
+            kakaoLogin();
+          }}>
           <View style={{flexDirection: 'row'}}>
             <Image
               source={require('./../images/kakao_login.png')}

@@ -20,22 +20,76 @@ import style from '../style/style';
 import {Footer} from 'native-base';
 import {TextInput} from 'react-native-paper';
 
+import axios from './../api/axios';
+
 import {MainCircleButton} from './Main';
 import CreateDeliveryList from '../components/CreateDeliveryList';
 import {red100, white} from 'react-native-paper/lib/typescript/styles/colors';
 import {navigate} from '../navigation/RootNavigation';
 
-function DeliveryListScreen() {
+function DeliveryListScreen({route}) {
+  const {LAT, LON, ca_id, categoryList} = route.params;
+  const [shopList, setShopList] = React.useState([]);
+  const [categoryId, setCategoryId] = React.useState(ca_id);
+
+  React.useEffect(() => {
+    let dataToSend = {lat: LAT, lon: LON, ca_id: categoryId};
+    let formBody = [];
+    for (let key in dataToSend) {
+      let encodedKey = encodeURIComponent(key);
+      let encodedValue = encodeURIComponent(dataToSend[key]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    formBody = formBody.join('&');
+    axios
+      .post(
+        'shop_list.php',
+        // mb_id: userEmail,
+        // mb_password: userPassword,
+        formBody,
+      )
+      .then(function (response) {
+        console.log(response.data.rowdata);
+        setShopList(response.data.rowdata);
+
+        // console.log(response);
+        console.log('통신 성공');
+      })
+      .catch(function (error) {
+        console.log(error);
+        console.log('통신 실패');
+      });
+  }, [categoryId]);
+
   return (
     <View style={{flex: 1}}>
       <View style={{height: 50, backgroundColor: 'white'}}>
         <ScrollView
           horizontal={true}
           style={{marginHorizontal: 15, marginTop: 15}}>
-          <View style={styles.tag_select}>
-            <Text style={styles.tag_select_text}>한식</Text>
-          </View>
-          <View style={styles.tag_unselect}>
+          {categoryList.map(item => {
+            return (
+              <TouchableOpacity
+                style={
+                  categoryId === item.ca_id
+                    ? styles.tag_select
+                    : styles.tag_unselect
+                }
+                onPress={() => {
+                  setCategoryId(item.ca_id);
+                }}>
+                <Text
+                  style={
+                    categoryId === item.ca_id
+                      ? styles.tag_select_text
+                      : styles.tag_unselect_text
+                  }>
+                  {item.ca_name}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+          {/* <View style={styles.tag_unselect}>
             <Text style={styles.tag_unselect_text}>중식</Text>
           </View>
           <View style={styles.tag_unselect}>
@@ -61,7 +115,7 @@ function DeliveryListScreen() {
           </View>
           <View style={styles.tag_unselect}>
             <Text style={styles.tag_unselect_text}>야식</Text>
-          </View>
+          </View> */}
         </ScrollView>
       </View>
       <View style={{backgroundColor: 'white', flex: 1}}>
@@ -93,7 +147,12 @@ function DeliveryListScreen() {
             />
           </View>
         </View>
-        <CreateDeliveryList></CreateDeliveryList>
+        <CreateDeliveryList
+          shopList={shopList}
+          ca_id={ca_id}
+          LAT={LAT}
+          LON={LON}
+        />
       </View>
 
       <Footer style={styles.footer}>

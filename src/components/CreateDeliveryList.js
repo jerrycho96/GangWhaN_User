@@ -58,25 +58,31 @@ const defaultData = {
   ],
 };
 
-const RenderItem = ({item}) => {
+const RenderItem = ({item, LAT, LON}) => {
   return (
     <View style={{paddingHorizontal: 10}}>
       <TouchableOpacity
         style={style.itemView}
         onPress={() => {
-          navigate(
-            'DeliveryDetail' /*{
-            NAME: item.name,
-            STARS: item.stars,
-            DELPRICE: item.delPrice,
-            DELTIME: item.delTime,
-          }*/,
-          );
+          navigate('DeliveryDetail', {
+            sl_sn: item.sl_sn,
+            min_order_price: item.min_order_price,
+            sl_delv_time: item.sl_delv_time,
+            delv_price: item.delv_price,
+            sl_soge: item.sl_soge,
+            sl_addr1: item.sl_addr1,
+            sl_biztel: item.sl_biztel,
+            shop_review_list: item.shop_review_list,
+            sl_title: item.sl_title,
+            LAT: LAT,
+            LON: LON,
+            review_avg: item.review_avg,
+          });
         }}>
         <Image source={item.img} style={style.itemImg}></Image>
         <View style={{flex: 1}}>
           <View style={{flexDirection: 'row'}}>
-            <Text style={style.itemName}>{item.name} </Text>
+            <Text style={style.itemName}>{item.sl_title} </Text>
             {item.new ? (
               <View
                 style={{
@@ -112,8 +118,8 @@ const RenderItem = ({item}) => {
               marginVertical: 3,
             }}>
             <Image source={require('./../images/stars.png')} />
-            <Text style={style.itemMsg}>{item.stars}</Text>
-            <Text style={style.delPrice}> 배달비용 {item.delPrice}원</Text>
+            <Text style={style.itemMsg}>{item.review_avg} </Text>
+            <Text style={style.delPrice}> 배달비용 {item.delv_price}원</Text>
           </View>
           <View
             style={{
@@ -127,7 +133,7 @@ const RenderItem = ({item}) => {
               <Text style={style.itemMsg}>{item.delTime}</Text>
             </View>
 
-            <Text>{item.delKm}km</Text>
+            <Text>{item.distance}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -141,15 +147,15 @@ const RenderItem = ({item}) => {
   );
 };
 
-function CreateDeliveryList() {
+function CreateDeliveryList({shopList, ca_id}) {
   const [foodplace, setFoodPlace] = useState(defaultData.datas3);
 
   return (
     <View style={style.root}>
       <FlatList
-        data={foodplace}
-        renderItem={RenderItem}
-        keyExtractor={item => item.key}></FlatList>
+        data={shopList}
+        renderItem={({item}) => <RenderItem item={item} ca_id={ca_id} />}
+        keyExtractor={item => item.sl_sn}></FlatList>
     </View>
   );
 }

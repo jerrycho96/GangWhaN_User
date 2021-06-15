@@ -1,4 +1,4 @@
-package com.gangwhanuser02;
+package com.dmonster.gangwhanuser;
 
 import com.facebook.react.ReactActivity;
 

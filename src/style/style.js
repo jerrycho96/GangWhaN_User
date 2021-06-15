@@ -112,4 +112,16 @@ export default StyleSheet.create({
     backgroundColor: '#E5E5E5',
     marginVertical: 20,
   },
+  boldtxt18: {color: 'black', fontWeight: 'bold', fontSize: 18},
+
+  mediumtxt16: {fontWeight: '600', fontSize: 16},
+  boldwhite16: {color: 'white', fontSize: 16, fontWeight: 'bold'},
+
+  bluebackgroundbutton: {
+    height: 45,
+    backgroundColor: '#E51A47',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+  },
 });

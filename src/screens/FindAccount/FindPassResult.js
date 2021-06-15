@@ -8,8 +8,12 @@ import {
 } from 'react-native';
 import {CommonActions} from '@react-navigation/native';
 
+import axios from '../../api/axios';
+import {ShowSnackbar} from '../../components/BOOTSTRAP';
+
 import style from '../../style/style';
 import {BtnSubmit} from '../components/BOOTSTRAP';
+import {navigate, resetRoot} from '../../navigation/RootNavigation';
 
 // const FindButton = (props) => {
 //     return (
@@ -23,7 +27,68 @@ import {BtnSubmit} from '../components/BOOTSTRAP';
 //     );
 // }
 
-function FindPassResultScreen({navigation}) {
+function FindPassResultScreen({navigation, route}) {
+  const [password, setPassword] = React.useState('');
+  const [confirmPassword, setConfirmPassword] = React.useState('');
+  const {ID, PHONE} = route.params;
+  console.log(ID, PHONE);
+
+  // 회원가입
+  const axiosPost = () => {
+    if (!password) {
+      ShowSnackbar({text: '비밀번호를 확인해주세요'});
+      return;
+    }
+    if (!confirmPassword) {
+      ShowSnackbar({text: '비밀번호를 확인해주세요'});
+      return;
+    }
+    if (confirmPassword !== password) {
+      ShowSnackbar({text: '비밀번호 확인과 일치하지 않습니다'});
+      return;
+    }
+    var dataToSend = {
+      mb_id: ID,
+      mb_password: password,
+      mb_password_re: confirmPassword,
+      mb_hp: PHONE,
+    };
+    let formBody = [];
+    for (let key in dataToSend) {
+      let encodedKey = encodeURIComponent(key);
+      let encodedValue = encodeURIComponent(dataToSend[key]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    formBody = formBody.join('&');
+    axios
+      .post(
+        'pw_reset.php',
+        // mb_id: userEmail,
+        // mb_password: userPassword,
+        formBody,
+      )
+      .then(function (response) {
+        if (response.data.message === 'success') {
+          ShowSnackbar({text: '비밀번호 변경 성공.'});
+          resetRoot('Login');
+        } else if (response.data.message === 'Processing error(3)') {
+          ShowSnackbar({text: '휴대폰 번호가 일치하지 않습니다.'});
+        } else {
+          setErrortext(response.data.message);
+        }
+
+        console.log(response.data.message);
+        // console.log(response);
+        console.log('통신 성공');
+      })
+      .catch(function (error) {
+        console.log(error);
+        ShowSnackbar({
+          text: '비밀번호 변경 오류',
+        });
+        console.log('통신 실패');
+      });
+  };
   return (
     <View style={{height: 290, backgroundColor: 'white'}}>
       <View style={{padding: 15}}>
@@ -33,25 +98,24 @@ function FindPassResultScreen({navigation}) {
         <View>
           <TextInput
             style={style.textInput}
-            placeholder={'새 비밀번호 입력'}></TextInput>
+            placeholder={'새 비밀번호 입력'}
+            onChangeText={value => {
+              setPassword(value);
+            }}></TextInput>
           <Text style={style.passInfo}>
             영문, 숫자, 특수기호를 모두 포함해 8자 이상
           </Text>
           <TextInput
             style={style.textInput}
-            placeholder={'새 비밀번호 한번 더 입력'}></TextInput>
+            placeholder={'새 비밀번호 한번 더 입력'}
+            onChangeText={value => {
+              setConfirmPassword(value);
+            }}></TextInput>
         </View>
         <View style={{height: 30}}></View>
         <TouchableOpacity
           style={[style.btnSubmit, style.container0]}
-          onPress={() =>
-            navigation.dispatch(
-              CommonActions.reset({
-                index: 0,
-                routes: [{name: 'Login'}],
-              }),
-            )
-          }>
+          onPress={() => axiosPost()}>
           <Text style={[style.btnSubmitTxt]}>비밀번호 변경</Text>
         </TouchableOpacity>
       </View>

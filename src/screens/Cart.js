@@ -11,14 +11,54 @@ import {
 import style from '../style/style';
 import {RadioButton} from 'react-native-paper';
 import Modal from 'react-native-modal';
+import AsyncStorage from '@react-native-community/async-storage';
+
+import axios from './../api/axios';
 
 export default function Cart({navigation}) {
   const [checkedRadio, setCheckedRadio] = React.useState('first');
   const [cartdelModal, setCartdelModal] = React.useState(false);
 
+  const [menuCount, setMenuCount] = React.useState(1);
+
+  const [cartList, setCartList] = React.useState([]);
+
+  let MB_ID;
+  let TOKEN;
+
   const toggleDelModal = () => {
     setCartdelModal(!cartdelModal);
   };
+  React.useEffect(() => {
+    AsyncStorage.getItem('userData', (err, result) => {
+      const UserId = JSON.parse(result);
+      console.log(UserId.userId);
+      console.log(UserId.token);
+      MB_ID = UserId.userId;
+      TOKEN = UserId.token;
+    });
+    // let dataToSend = {mb_id: MB_ID, token: TOKEN};
+    // 장바구니 목록 테스트용
+    let dataToSend = {mb_id: 'admin', token: '2021060711085917'};
+    let formBody = [];
+    for (let key in dataToSend) {
+      let encodedKey = encodeURIComponent(key);
+      let encodedValue = encodeURIComponent(dataToSend[key]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    formBody = formBody.join('&');
+    axios
+      .post('cart_list.php', formBody)
+      .then(function (response) {
+        setCartList(response.data.rowdata);
+        console.log(response.data);
+        console.log('장바구니 통신 성공');
+      })
+      .catch(function (error) {
+        console.log(error);
+        console.log('통신 실패');
+      });
+  }, []);
 
   return (
     <View style={{flex: 1}}>
@@ -48,101 +88,112 @@ export default function Cart({navigation}) {
             </View>
           </View>
         </View>
-        <View style={{height: 10, backgroundColor: '#F5F5F5'}}></View>
-        <View
-          style={{
-            paddingHorizontal: 15,
-            paddingVertical: 15,
-            backgroundColor: 'white',
-          }}>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <Text style={{fontSize: 18}}>김치찌개</Text>
-            <TouchableOpacity onPress={toggleDelModal}>
-              <Image source={require('../images/cartdelete.png')}></Image>
-              <Modal isVisible={cartdelModal} onRequestClose={toggleDelModal}>
+        {cartList.map(item => {
+          return (
+            <View>
+              <View style={{height: 10, backgroundColor: '#F5F5F5'}}></View>
+              <View
+                style={{
+                  paddingHorizontal: 15,
+                  paddingVertical: 15,
+                  backgroundColor: 'white',
+                }}>
                 <View
                   style={{
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
                   }}>
-                  <View
-                    style={{
-                      backgroundColor: 'white',
-                      width: '100%',
-                      padding: 20,
-                      alignItems: 'center',
-                    }}>
-                    <Text style={{fontSize: 18, fontWeight: 'bold'}}>
-                      장바구니 제품 삭제
-                    </Text>
-                    <View
-                      style={{
-                        height: 1,
-                        backgroundColor: '#E5E5E5',
-                        marginVertical: 20,
-                        width: '100%',
-                      }}></View>
-                    <View>
-                      <Text style={{textAlign: 'center', fontSize: 16}}>
-                        해당 제품이 장바구니에서 삭제됩니다. {'\n'}
-                        삭제하시겠습니까?
+                  <Text style={{fontSize: 18}}>{item.it_name}</Text>
+                  <TouchableOpacity onPress={toggleDelModal}>
+                    <Image source={require('../images/cartdelete.png')}></Image>
+                  </TouchableOpacity>
+                </View>
+
+                <Text
+                  style={[
+                    styles.subcontents,
+                    {marginTop: 10, marginBottom: 5},
+                  ]}>
+                  기본 : {item.it_price}원
+                </Text>
+                {item.option.map(option => {
+                  return (
+                    <View style={{marginBottom: 5}}>
+                      <Text style={styles.subcontents}>
+                        {option.io_name} : {option.ioi_name}(+{option.ioi_price}
+                        원)
                       </Text>
                     </View>
-                    <View
-                      style={{
-                        width: '100%',
-                        flexDirection: 'row',
-                        justifyContent: 'space-around',
-                        marginTop: 25,
+                  );
+                })}
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: 10,
+                  }}>
+                  <Text style={{fontSize: 18}}>9,000 원</Text>
+                  <View style={styles.plusminus}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        menuCount >= 2 ? setMenuCount(menuCount - 1) : null;
+                        console.log(menuCount);
                       }}>
-                      <TouchableOpacity
-                        style={styles.modalCancel}
-                        onPress={() => setCartdelModal(false)}>
-                        <Text style={styles.modalBtnFont}>취소</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity style={styles.modalOk}>
-                        <Text style={styles.modalBtnFont}>확인</Text>
-                      </TouchableOpacity>
-                    </View>
+                      <Image source={require('../images/minus.png')}></Image>
+                    </TouchableOpacity>
+                    <Text>{item.it_qty}개</Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setMenuCount(menuCount + 1);
+                      }}>
+                      <Image source={require('../images/plus.png')}></Image>
+                    </TouchableOpacity>
                   </View>
                 </View>
-              </Modal>
-            </TouchableOpacity>
-          </View>
-          <View style={{marginVertical: 10}}>
-            <Text style={styles.subcontents}>기본 : 7,000원</Text>
-            <Text style={styles.subcontents}>맵기선택 : 기본맛(+0원)</Text>
-            <Text style={styles.subcontents}>추가선택 : 김치추가(+500원)</Text>
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: 10,
-            }}>
-            <Text style={{fontSize: 18}}>9,000 원</Text>
-            <View style={styles.plusminus}>
-              <Image source={require('../images/minus.png')}></Image>
-              <Text>1개</Text>
-              <Image source={require('../images/plus.png')}></Image>
+
+                {/* <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: 10,
+                }}>
+                <Text style={{fontSize: 18}}>수량</Text>
+                <View style={styles.countstyle}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      menuCount >= 2 ? setMenuCount(menuCount - 1) : null;
+                      console.log(menuCount);
+                    }}>
+                    <Text style={{fontSize: 30, color: '#777777'}}>-</Text>
+                  </TouchableOpacity>
+                  <Text style={style.text2}>{menuCount}개</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setMenuCount(menuCount + 1);
+                    }}>
+                    <Text style={{fontSize: 20}}>+</Text>
+                  </TouchableOpacity>
+                </View>
+              </View> */}
+                <View
+                  style={{
+                    height: 1,
+                    backgroundColor: '#E5E5E5',
+                    marginVertical: 12,
+                  }}></View>
+                <TouchableOpacity style={styles.addcart}>
+                  <Image source={require('../images/plus1.png')}></Image>
+                  <Text style={[style.text2, {color: '#E51A47'}]}>
+                    제품 추가하기
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-          <View
-            style={{
-              height: 1,
-              backgroundColor: '#E5E5E5',
-              marginVertical: 12,
-            }}></View>
-          <TouchableOpacity style={styles.addcart}>
-            <Image source={require('../images/plus1.png')}></Image>
-            <Text style={[style.text2, {color: '#E51A47'}]}>
-              {' '}
-              제품 추가하기{' '}
-            </Text>
-          </TouchableOpacity>
-        </View>
+          );
+        })}
       </ScrollView>
       <SafeAreaView
         style={{
@@ -167,6 +218,55 @@ export default function Cart({navigation}) {
           </TouchableOpacity>
         </View>
       </SafeAreaView>
+      <Modal isVisible={cartdelModal} onRequestClose={toggleDelModal}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <View
+            style={{
+              backgroundColor: 'white',
+              width: '100%',
+              padding: 20,
+              alignItems: 'center',
+            }}>
+            <Text style={{fontSize: 18, fontWeight: 'bold'}}>
+              장바구니 제품 삭제
+            </Text>
+            <View
+              style={{
+                height: 1,
+                backgroundColor: '#E5E5E5',
+                marginVertical: 20,
+                width: '100%',
+              }}></View>
+            <View>
+              <Text style={{textAlign: 'center', fontSize: 16}}>
+                해당 제품이 장바구니에서 삭제됩니다. {'\n'}
+                삭제하시겠습니까?
+              </Text>
+            </View>
+            <View
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                marginTop: 25,
+              }}>
+              <TouchableOpacity
+                style={styles.modalCancel}
+                onPress={() => setCartdelModal(false)}>
+                <Text style={styles.modalBtnFont}>취소</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modalOk}>
+                <Text style={styles.modalBtnFont}>확인</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

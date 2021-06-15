@@ -17,7 +17,8 @@ import {BtnSubmit} from '../components/BOOTSTRAP';
 //     );
 // }
 
-function FindIdResultScreen({navigation}) {
+function FindIdResultScreen({navigation, route}) {
+  const {FINDID} = route.params;
   return (
     <View style={{height: 280, backgroundColor: 'white'}}>
       <View style={{padding: 15}}>
@@ -27,7 +28,7 @@ function FindIdResultScreen({navigation}) {
         <View>
           <View style={{flexDirection: 'row', marginBottom: 10}}>
             <Text style={styles.resultButton}>아이디</Text>
-            <Text style={style.text2}>abc12345</Text>
+            <Text style={style.text2}>{FINDID}</Text>
           </View>
           <View style={{flexDirection: 'row'}}>
             <Text style={styles.resultButton}>가입일</Text>

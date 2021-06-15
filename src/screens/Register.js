@@ -3,9 +3,89 @@ import {Image, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-navigation';
 import {navigate} from '../navigation/RootNavigation';
 
+import KakaoLogin from '@actbase/react-native-kakao-login';
+import {NaverLogin, getProfile} from '@react-native-seoul/naver-login';
+
 import style from '../style/style';
 
+// 카카오
+
+const iosKeys = {
+  kConsumerKey: 'Wrl2EnohjGgLLDGoneQ_',
+  kConsumerSecret: 'dDDty5kJz0',
+  kServiceAppName: '테스트앱(iOS)',
+  kServiceAppUrlScheme: 'testapp', // only for iOS
+};
+
+const androidKeys = {
+  kConsumerKey: 'Wrl2EnohjGgLLDGoneQ_',
+  kConsumerSecret: 'dDDty5kJz0',
+  kServiceAppName: '테스트앱(안드로이드)',
+};
+//-------------------------------------------------------------------
+
 function RegisterScreen({navigation}) {
+  // 카카오
+  const kakaoLogin = () => {
+    KakaoLogin.login()
+      .then(result => {
+        getProfile1();
+        console.log(`Login Finished:${JSON.stringify(result)}`);
+      })
+      .catch(err => {
+        if (err.code === 'E_CANCELLED_OPERATION') {
+          console.log(`Login Cancelled:${err.message}`);
+        } else {
+          console.log(`Login Failed:${err.code} ${err.message}`);
+        }
+      });
+  };
+
+  const getProfile1 = () => {
+    KakaoLogin.getProfile()
+      .then(result => {
+        console.log(`Login Finished:${JSON.stringify(result)}`);
+        // 이후 result.id를 활용해서 로그인 로직을 구현해주세용
+      })
+      .catch(err => {
+        console.log(`Get Profile Failed:${err.code} ${err.message}`);
+      });
+  };
+  //-------------------------------------------------------------------
+
+  // 네이버
+  const [naverToken, setNaverToken] = React.useState(null);
+  const initials = Platform.OS === 'ios' ? iosKeys : androidKeys;
+
+  const naverLogin = props => {
+    return new Promise((resolve, reject) => {
+      NaverLogin.login(props, (err, token) => {
+        console.log(`\n\n  Token is fetched  :: ${token} \n\n`);
+        setNaverToken(token);
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(token);
+      });
+    });
+  };
+
+  const naverLogout = () => {
+    NaverLogin.logout();
+    setNaverToken('');
+  };
+
+  const getUserProfile = async () => {
+    const profileResult = await getProfile(naverToken.accessToken);
+    if (profileResult.resultcode === '024') {
+      Alert.alert('로그인 실패', profileResult.message);
+      return;
+    }
+    console.log('profileResult', profileResult);
+  };
+  //-------------------------------------------------------------------
+
   return (
     <View style={[style.container1, {backgroundColor: 'white'}]}>
       <SafeAreaView style={{flex: 1, justifyContent: 'center'}}>
@@ -20,7 +100,10 @@ function RegisterScreen({navigation}) {
             style.social_btn,
             style.container0,
             {backgroundColor: '#00C73C'},
-          ]}>
+          ]}
+          onPress={() => {
+            naverLogin(initials);
+          }}>
           <View style={{flexDirection: 'row'}}>
             <Image
               source={require('./../images/naver_login.png')}
@@ -36,7 +119,10 @@ function RegisterScreen({navigation}) {
             style.social_btn,
             style.container0,
             {backgroundColor: '#FAE100'},
-          ]}>
+          ]}
+          onPress={() => {
+            kakaoLogin();
+          }}>
           <View style={{flexDirection: 'row'}}>
             <Image
               source={require('./../images/kakao_login.png')}

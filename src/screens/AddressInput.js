@@ -8,14 +8,55 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {KakaoMapApi} from '../components/KakaoMapApi';
+import {Platform, PermissionsAndroid} from 'react-native';
+import Geolocation from '@react-native-community/geolocation';
+
+import AsyncStorage from '@react-native-community/async-storage';
 
 import style from '../style/style';
+import {navigate} from '../navigation/RootNavigation';
 
-function AddressInputScreen({navigation}) {
+function AddressInputScreen({navigation, route}) {
+  const {LAT, LON} = route.params;
+  const [latitude, setLatitude] = React.useState(LAT);
+  const [longitude, setLogitude] = React.useState(LON);
+
+  const geoLocation = () => {
+    Geolocation.getCurrentPosition(
+      position => {
+        const latitude = JSON.stringify(position.coords.latitude);
+        const longitude = JSON.stringify(position.coords.longitude);
+
+        setLatitude(latitude);
+        setLogitude(longitude);
+        console.log(latitude, longitude);
+
+        AsyncStorage.setItem(
+          'userLocation',
+          JSON.stringify({
+            latitude: latitude,
+            longitude: longitude,
+          }),
+        );
+      },
+      error => {
+        console.log(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  };
+
   return (
     <ScrollView style={{backgroundColor: 'white'}}>
       <View style={{paddingHorizontal: 15, paddingVertical: 20}}>
         <View>
+          <View>
+            {/* 현재위치 테스트 */}
+            <Text>{latitude}</Text>
+            <Text>{longitude}</Text>
+          </View>
+
           <View style={style.inputGroup2}>
             <View
               style={
@@ -43,7 +84,9 @@ function AddressInputScreen({navigation}) {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={style.button3}>
+            <TouchableOpacity
+              style={style.button3}
+              onPress={() => geoLocation()}>
               <View style={{flexDirection: 'row'}}>
                 <Image source={require('./../images/gps_icon.png')}></Image>
                 <Text style={{color: '#E51A47', fontSize: 16, marginLeft: 5}}>
@@ -67,13 +110,17 @@ function AddressInputScreen({navigation}) {
             </View>
             <Image
               source={require('./../images/map.png')}
-              style={{width: '100%', resizeMode: 'contain'}}></Image>
+              style={{width: '100%', resizeMode: 'contain'}}
+            />
+            {/* <KakaoMapApi /> */}
           </View>
         </View>
         <View style={{marginVertical: 15}}>
           <TouchableOpacity
             style={[style.btnSubmit, style.container0]}
-            onPress={() => {}}>
+            onPress={() => {
+              navigate('Main', {LAT: latitude, LON: longitude});
+            }}>
             <Text style={[style.btnSubmitTxt, {fontSize: 16}]}>적용</Text>
           </TouchableOpacity>
         </View>

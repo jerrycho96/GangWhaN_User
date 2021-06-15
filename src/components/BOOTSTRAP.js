@@ -3,6 +3,7 @@ import React from 'react';
 import style from '../style/style';
 import {resetRoot} from '../navigation/RootNavigation';
 import Modal from 'react-native-modal';
+import Snackbar from 'react-native-snackbar';
 
 export const BtnSubmit = props => {
   return (
@@ -14,6 +15,19 @@ export const BtnSubmit = props => {
       <Text style={[style.btnSubmitTxt]}>{props.title}</Text>
     </TouchableOpacity>
   );
+};
+
+export const ShowSnackbar = props => {
+  Snackbar.show({
+    text: props.text,
+    duration: Snackbar.LENGTH_SHORT,
+    backgroundColor: '#FEEDEC',
+    textColor: '#E51A47',
+    // action: {
+    //   text: '닫기',
+    //   textColor: 'black',
+    // },
+  });
 };
 
 export const RedIconButton = props => {
@@ -190,6 +204,67 @@ export const ModalAdult = props => {
               확인
             </Text>
           </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+export const LogOutModal = props => {
+  const Cancel = () => {
+    props.cancel();
+  };
+
+  function Submit() {
+    props.confirm();
+  }
+
+  return (
+    <Modal isVisible={props.open} onBackButtonPress={() => Cancel()}>
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View
+          style={{
+            backgroundColor: 'white',
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 15,
+          }}>
+          <Text style={style.boldtxt18}>{props.title}</Text>
+          {/* <Underline1 /> */}
+          <View
+            style={{
+              height: 1,
+              backgroundColor: '#E5E5E5',
+              width: '100%',
+              marginTop: 15,
+            }}
+          />
+          <View style={{marginVertical: 20}}>
+            <Text style={{textAlign: 'center', fontSize: 16, marginBottom: 10}}>
+              {props.text1}
+            </Text>
+            {props.text2 !== '' ? (
+              <Text style={{textAlign: 'center', fontSize: 16}}>
+                {props.text2}
+              </Text>
+            ) : null}
+          </View>
+          <View style={{flexDirection: 'row', width: '100%'}}>
+            <TouchableOpacity
+              style={[
+                style.bluebackgroundbutton,
+                {flex: 1, backgroundColor: '#777777', marginRight: 5},
+              ]}
+              onPress={() => Cancel()}>
+              <Text style={style.boldwhite16}>{props.canceltxt}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[style.bluebackgroundbutton, {flex: 1, marginLeft: 5}]}
+              onPress={() => Submit()}>
+              <Text style={style.boldwhite16}>{props.submittxt}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>

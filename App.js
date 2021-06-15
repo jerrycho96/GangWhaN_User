@@ -5,18 +5,11 @@ import {
   createStackNavigator,
   CardStyleInterpolators,
 } from '@react-navigation/stack';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Image,
-  TextInput,
-  ScrollView,
-  SafeAreaView,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import Modal from 'react-native-modal';
+
+import AsyncStorage from '@react-native-community/async-storage';
+import Geolocation from '@react-native-community/geolocation';
 
 import LoginScreen from './src/screens/Login';
 import RegisterScreen from './src/screens/Register';
@@ -32,14 +25,11 @@ import FindPassResultScreen from './src/screens/FindAccount/FindPassResult';
 import MainScreen from './src/screens/Main';
 import AddressInputScreen from './src/screens/AddressInput';
 import DeliveryFoodScreen from './src/screens/DeliveryFood';
-import {Button} from 'native-base';
 import SpecialFoodScreen from './src/screens/SpecialFood';
 import DeliveryListScreen from './src/screens/DeliveryList';
 import DeliVeryDetailScreen from './src/screens/DeliveryDetail';
-import CreateDeliveryList from './src/components/CreateDeliveryList';
 import DeliveryMenuTab from './src/components/DeliveryMenuTab';
 import DeliveryOrderTab from './src/components/DeliveryOrderTab';
-import WriteReviewScreen from './src/screens/WriteReview';
 import CouponScreen from './src/screens/Coupon';
 import DetailMenu from './src/screens/DetailMenu';
 import Cart from './src/screens/Cart';
@@ -52,13 +42,8 @@ import QuickOrderSuccess from './src/screens/QuickOrderSuccess';
 import MyMenuHome from './src/screens/MyMenu/MyMenuHome';
 import MyOrderList from './src/screens/MyMenu/MyOrderList';
 import MyOrderDetail from './src/screens/MyMenu/MyOrderDetail';
-import {
-  navigate,
-  navigationRef,
-  resetRoot,
-} from './src/navigation/RootNavigation';
+import {navigate, navigationRef} from './src/navigation/RootNavigation';
 import MyCoupon from './src/screens/MyMenu/MyCoupon';
-import Test from './src/screens/Test';
 import MyHeartList from './src/screens/MyMenu/MyHeartList';
 import MyReview from './src/screens/MyMenu/MyReview';
 import ServiceCenter from './src/screens/MyMenu/ServiceCenter';
@@ -70,22 +55,47 @@ import QuestionsView from './src/screens/MyMenu/QuestionsView';
 import FAQ from './src/screens/MyMenu/FAQ';
 import WriteReview1 from './src/screens/WriteReview1';
 import SplashScreen1 from './src/screens/SplashScreen';
-import AdultModal from './src/components/AdultModal';
 
 const Stack = createStackNavigator();
-const ModalStack = createStackNavigator();
 
-function App({navigation}) {
+function App() {
   const [cartalldelModal, setCartalldelModal] = React.useState(false);
 
   const toggleAllDelModal = () => {
     setCartalldelModal(!cartalldelModal);
   };
 
-  useEffect(() => {
-    setTimeout(() => {
-      resetRoot('Login');
-    }, 2000);
+  let LAT;
+  let LON;
+  React.useEffect(() => {
+    Geolocation.getCurrentPosition(
+      position => {
+        const latitude = JSON.stringify(position.coords.latitude);
+        const longitude = JSON.stringify(position.coords.longitude);
+
+        console.log(latitude, longitude);
+
+        AsyncStorage.setItem(
+          'userLocation',
+          JSON.stringify({
+            latitude: latitude,
+            longitude: longitude,
+          }),
+        );
+      },
+      error => {
+        console.log(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+
+    AsyncStorage.getItem('userLocation', (err, result) => {
+      const UserLocation = JSON.parse(result);
+      console.log(UserLocation.latitude);
+      console.log(UserLocation.longitude);
+      LAT = UserLocation.latitude;
+      LON = UserLocation.longitude;
+    });
   }, []);
 
   return (
@@ -165,11 +175,6 @@ function App({navigation}) {
           name="RegisterSuccess"
           component={RegisterSuccessScreen}
           options={{headerTitle: '회원가입 완료'}}
-        />
-        <Stack.Screen
-          name="Test"
-          component={Test}
-          options={{headerTitle: '테스트'}}
         />
         <Stack.Screen
           name="FindPass"

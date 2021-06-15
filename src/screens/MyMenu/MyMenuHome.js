@@ -9,12 +9,17 @@ import {
   SafeAreaView,
   TextInput,
 } from 'react-native';
+import {LogOutModal, Underline10} from '../../components/BOOTSTRAP';
 import Modal from 'react-native-modal';
-import {navigate} from '../../navigation/RootNavigation';
+import AsyncStorage from '@react-native-community/async-storage';
+
+import {navigate, resetRoot} from '../../navigation/RootNavigation';
 
 import style from '../../style/style';
 
 export default function MyMenuHome({navigation}) {
+  const [onConfirm, setOnConfirm] = React.useState(false);
+
   return (
     <ScrollView style={{flex: 1}}>
       <View style={{backgroundColor: 'white'}}>
@@ -241,6 +246,9 @@ export default function MyMenuHome({navigation}) {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
+          }}
+          onPress={() => {
+            setOnConfirm(true);
           }}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Image source={require('../../images/mymenuicon9.png')}></Image>
@@ -264,6 +272,21 @@ export default function MyMenuHome({navigation}) {
           통신판매업신고번호: 제1111-인천강화-0000호
         </Text>
       </SafeAreaView>
+
+      <LogOutModal
+        open={onConfirm}
+        cancel={() => setOnConfirm(false)}
+        confirm={() => {
+          setOnConfirm(false);
+          AsyncStorage.clear();
+          resetRoot('Login');
+        }}
+        title="로그아웃"
+        text1="연결된 계정을 로그아웃 하시겠습니까?"
+        text2=""
+        canceltxt="취소"
+        submittxt="확인"
+      />
     </ScrollView>
   );
 }
